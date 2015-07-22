@@ -117,6 +117,7 @@ module.exports = (robot) ->
     recordingsCleared = clearScheduledRecordingsFromRoom(findRoom(msg))
     msg.send 'Deleted ' + recordingsCleared + ' recording' + (if recordingsCleared == 1 then '' else 's') + '. No more recordings for you.'
   robot.respond /record the future (.{3,})$/i, (msg) ->
+    recordings = getRecordings()
     if _.filter(recordings, room: room).length > 1 then return msg.send 'You can only schedule one future recording per room.\n\nIf you would like to change your recording time, please delete the previous one first.'
     updateBrain recordingsToKeep
     naturalTime = msg.match[1]
