@@ -118,7 +118,10 @@ module.exports = (robot) ->
     msg.send 'Deleted ' + recordingsCleared + ' recording' + (if recordingsCleared == 1 then '' else 's') + '. No more recordings for you.'
   robot.respond /record the future (.{3,})$/i, (msg) ->
     recordings = getRecordings()
+    console.log recordings
     recordingsCount = _.filter(recordings, room: room)
+    console.log recordingsCount
+    console.log "###", recordingsCount.length
     if recordingsCount.length > 1 then return msg.send 'You can only schedule one future recording per room.\n\nIf you would like to change your recording time, please delete the previous one first.'
     naturalTime = msg.match[1]
     timeStamp = chrono.parseDate(naturalTime)
