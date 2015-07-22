@@ -76,7 +76,7 @@ module.exports = (robot) ->
     active.book.push bookmark
     allBookmarks = active.book
     console.log '### allBookmarks', allBookmarks
-    message = "🔖 #{bookmarkTitle} bookmark added (total bookmarks: #{allBookmarks.length})"
+    message = "🔖 \"#{bookmarkTitle}\" bookmark added (total bookmarks: #{allBookmarks.length})"
     robot.messageRoom room, message
 
   # Finds the room for most adaptors
@@ -147,7 +147,7 @@ module.exports = (robot) ->
     msg.send 'Your current status is...'
   robot.respond /((record\s*)?(book)?mark)\s*(.{3,})*$/i, (msg) ->
     room = findRoom msg
-    bookmarkTitle = msg.match[4]
+    if msg.match[4] is undefined then bookmarkTitle = null else bookmarkTitle = msg.match[4]
     recordings = getRecordings()
     recordingsCount = _.filter(recordings, room: room)
     activeRecording = _.filter(recordingsCount, active: true)
