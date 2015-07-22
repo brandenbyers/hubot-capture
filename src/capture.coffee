@@ -79,6 +79,7 @@ module.exports = (robot) ->
   saveRecording = (room, start, bookmarks = []) ->
     recordings = getRecordings()
     newRecording =
+      time: '00:00'
       room: room
       start: start
       book: bookmarks
