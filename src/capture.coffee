@@ -61,7 +61,8 @@ module.exports = (robot) ->
   # Fires the recording message.
 
   doRecording = (room) ->
-    # TODO: change to initiate video recording and REMOVE SCHEDULER FROM BRAIN
+    timeStamp = new Date()
+    saveRecording room, timeStamp
     message = '🎥 Setting up my camera gear...\n🎬 Rolling...'
     robot.messageRoom room, message
 
@@ -73,9 +74,20 @@ module.exports = (robot) ->
       room = msg.envelope.user.reply_to
     room
 
-  # Stores a recording in the brain.
+  # Stores active recording to the brain
 
-  saveRecording = (room, time, utc) ->
+  saveRecording = (room, start, bookmarks = []) ->
+    recordings = getRecordings()
+    newRecording =
+      room: room
+      start: start
+      book: bookmarks
+    recordings.push newRecording
+    updateBrain recordings
+
+  # Stores a scheduled recording in the brain.
+
+  saveFutureRecording = (room, time, utc) ->
     recordings = getRecordings()
     newRecording =
       time: time
@@ -102,8 +114,9 @@ module.exports = (robot) ->
   new cronJob('1 * * * * 0-6', checkRecordings, null, true)
 
   robot.respond /record now/i, (msg) ->
-    doRecording(findRoom(msg))
-    # clearScheduledRecordingsFromRoom(findRoom(msg))
+    room = findRoom msg
+    clearScheduledRecordingsFromRoom room
+    doRecording room
   robot.respond /record stop/i, (msg) ->
     # TODO: make a stop function
   robot.respond /record status/i, (msg) ->
@@ -138,7 +151,7 @@ module.exports = (robot) ->
     console.log 'TIME STAMP:', timeStamp
     console.log '######################################'
     room = findRoom(msg)
-    saveRecording room, time
+    saveFutureRecording room, time
     msg.send 'Okay, I will start recording at ' + momentTime.format('h:mm A') + ' Eastern Time.'
   robot.respond /record list/i, (msg) ->
     recordings = getRecordingsForRoom(findRoom(msg))
