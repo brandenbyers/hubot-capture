@@ -116,7 +116,7 @@ module.exports = (robot) ->
     # TODO: If currently recording, send delete. If scheduled recording, delete schedule.
     recordingsCleared = clearScheduledRecordingsFromRoom(findRoom(msg))
     msg.send 'Deleted ' + recordingsCleared + ' recording' + (if recordingsCleared == 1 then '' else 's') + '. No more recordings for you.'
-  robot.respond /record later (.{3,})$/i, (msg) ->
+  robot.respond /record the future (.{3,})$/i, (msg) ->
     naturalTime = msg.match[1]
     timeStamp = chrono.parseDate(naturalTime)
     momentTime = moment(timeStamp)
