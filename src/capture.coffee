@@ -122,7 +122,8 @@ module.exports = (robot) ->
     recordingsCount = _.filter(recordings, room: findRoom(msg))
     console.log recordingsCount
     console.log "###", recordingsCount.length
-    if recordingsCount.length > 1 then return msg.send 'You can only schedule one future recording per room.\n\nIf you would like to change your recording time, please delete the previous one first.'
+    if recordingsCount.length > 1
+      return msg.send 'You can only schedule one future recording per room.\n\nIf you would like to change your recording time, please delete the previous one first.'
     naturalTime = msg.match[1]
     timeStamp = chrono.parseDate(naturalTime)
     momentTime = moment(timeStamp)
