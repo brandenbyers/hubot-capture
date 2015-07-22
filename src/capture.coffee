@@ -134,6 +134,9 @@ module.exports = (robot) ->
   robot.respond /record the future (.{3,})$/i, (msg) ->
     recordings = getRecordings()
     recordingsCount = _.filter(recordings, room: findRoom(msg))
+    activeChecker = _.filter(recordingsCount, active: true)
+    if activeChecker.length is 1
+      return msg.send 'Recording in progress. To set a future recording time please stop the active recording first.'
     if recordingsCount.length > 0
       return msg.send 'You can only schedule one future recording per room.\n\nIf you would like to change your recording time, please delete the previous one first by typing `. record delete`.'
     naturalTime = msg.match[1]
