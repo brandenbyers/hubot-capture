@@ -106,9 +106,9 @@ module.exports = (robot) ->
     # TODO: make a stop function
   robot.respond /(record)\s*(status|st)?\s?([^.]+)?$/i, (msg) ->
     msg.send 'Your current status is...'
-  robot.respond /(record)\s*(bookmark)?\s?([^.]+)?$/i, recBook ->
+  robot.respond /(record)\s*(bookmark)?\s?([^.]+)?$/i, (msg) ->
     msg.send 'Bookmark added.'
-  robot.respond /(record)\s*(remove)?\s?([^.]+)?$/i, recDeleteBook ->
+  robot.respond /(record)\s*(remove)?\s?([^.]+)?$/i, (msg) ->
     msg.send 'Deleted previous bookmark'
   robot.respond /(record)\s*(delete)?\s?([^.]+)?$/i, (msg) ->
     # TODO: If currently recording, send delete. If scheduled recording, delete schedule.
