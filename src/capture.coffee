@@ -82,6 +82,7 @@ module.exports = (robot) ->
       room: room
       start: start
       book: bookmarks
+      active: true
     recordings.push newRecording
     updateBrain recordings
 
@@ -131,10 +132,7 @@ module.exports = (robot) ->
     msg.send 'Deleted ' + recordingsCleared + ' recording' + (if recordingsCleared == 1 then '' else 's') + '. No more recordings for you.'
   robot.respond /record the future (.{3,})$/i, (msg) ->
     recordings = getRecordings()
-    console.log recordings
     recordingsCount = _.filter(recordings, room: findRoom(msg))
-    console.log recordingsCount
-    console.log "###", recordingsCount.length
     if recordingsCount.length > 0
       return msg.send 'You can only schedule one future recording per room.\n\nIf you would like to change your recording time, please delete the previous one first by typing `. record delete`.'
     naturalTime = msg.match[1]
@@ -155,6 +153,9 @@ module.exports = (robot) ->
     msg.send 'Okay, I will start recording at ' + momentTime.format('h:mm A') + ' Eastern Time.'
   robot.respond /record list/i, (msg) ->
     recordings = getRecordingsForRoom(findRoom(msg))
+    recordingsCount = _.filter(recordings, active: true)
+    if recordingsCount.length is 1
+      return msg.send 'There is no list. I\'m recording you right now.'
     if recordings.length == 0
       msg.send 'You have not scheduled a recording yet.'
     else
