@@ -88,6 +88,7 @@ module.exports = (robot) ->
 
   updateBrain = (recordings) ->
     console.log recordings
+    console.log robot.brain.get('recordings') or []
     robot.brain.set 'recordings', recordings
 
   clearScheduledRecordingsFromRoom = (room) ->
