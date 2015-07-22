@@ -99,18 +99,18 @@ module.exports = (robot) ->
   # Monday to Sunday.
   new cronJob('1 * * * * 0-6', checkRecordings, null, true)
 
-  robot.respond /(record)\s*(now|start)?\s?([^.]+)?$/i, (msg) ->
+  robot.respond /record now/i, (msg) ->
     doRecording(findRoom(msg))
     # clearScheduledRecordingsFromRoom(findRoom(msg))
-  robot.respond /(record)\s*(stop)?\s?([^.]+)?$/i, (msg) ->
+  robot.respond /record stop/i, (msg) ->
     # TODO: make a stop function
-  robot.respond /(record)\s*(status|st)?\s?([^.]+)?$/i, (msg) ->
+  robot.respond /record status/i, (msg) ->
     msg.send 'Your current status is...'
-  robot.respond /(record)\s*(bookmark)?\s?([^.]+)?$/i, (msg) ->
+  robot.respond /record bookmark/i, (msg) ->
     msg.send 'Bookmark added.'
-  robot.respond /(record)\s*(remove)?\s?([^.]+)?$/i, (msg) ->
+  robot.respond /record remove bookmark/i, (msg) ->
     msg.send 'Deleted previous bookmark'
-  robot.respond /(record)\s*(delete)?\s?([^.]+)?$/i, (msg) ->
+  robot.respond /record delete/i, (msg) ->
     # TODO: If currently recording, send delete. If scheduled recording, delete schedule.
     recordingsCleared = clearScheduledRecordingsFromRoom(findRoom(msg))
     msg.send 'Deleted ' + recordingsCleared + ' recording' + (if recordingsCleared == 1 then '' else 's') + '. No more recordings for you.'
@@ -131,7 +131,7 @@ module.exports = (robot) ->
     room = findRoom(msg)
     saveRecording room, time
     msg.send 'Okay, I will start recording at ' + momentTime.format('h:mm A') + ' Eastern Time.'
-  robot.respond /(record)\s*(list)?\s?([^.]+)?$/i, (msg) ->
+  robot.respond /record list/i, (msg) ->
     recordings = getRecordingsForRoom(findRoom(msg))
     if recordings.length == 0
       msg.send 'You don\'t have any recordings scheduled.'
