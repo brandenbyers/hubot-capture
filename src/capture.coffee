@@ -71,7 +71,7 @@ module.exports = (robot) ->
   addBookmark = (room, activeRecording) ->
     bookmark = new Date()
     console.log activeRecording
-    activeRecording['book'].push bookmark
+    activeRecording.book.push bookmark
     allBookmarks = activeRecording.book
     console.log allBookmarks
     message = "🔖 Bookmark added (total bookmarks: #{allBookmarks.length})"
