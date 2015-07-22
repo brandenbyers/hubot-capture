@@ -61,20 +61,22 @@ module.exports = (robot) ->
   # Fires the recording message.
 
   doRecording = (room) ->
-    timeStamp = new Date()
-    saveRecording room, timeStamp
+    saveRecording room
     message = '🎥 Setting up my camera gear...\n🎬 Rolling...'
     robot.messageRoom room, message
 
   # Add a bookmark to active recording
 
-  addBookmark = (room, activeRecording) ->
-    bookmark = new Date()
+  addBookmark = (room, activeRecording, bookmarkTitle) ->
+    bookmark = {
+      milliseconds: Date.now()
+      bookmarkTitle: bookmarkTitle
+    }
     active = activeRecording[0]
     active.book.push bookmark
     allBookmarks = active.book
     console.log '### allBookmarks', allBookmarks
-    message = "🔖 Bookmark added (total bookmarks: #{allBookmarks.length})"
+    message = "🔖 #{bookmarkTitle} bookmark added (total bookmarks: #{allBookmarks.length})"
     robot.messageRoom room, message
 
   # Finds the room for most adaptors
@@ -87,12 +89,12 @@ module.exports = (robot) ->
 
   # Stores active recording to the brain
 
-  saveRecording = (room, start, bookmarks = []) ->
+  saveRecording = (room, bookmarks = []) ->
     recordings = getRecordings()
     newRecording =
       time: '00:00'
       room: room
-      start: start
+      start: Date.now()
       book: bookmarks
       active: true
     recordings.push newRecording
@@ -143,14 +145,15 @@ module.exports = (robot) ->
     stopRecording room, activeRecording
   robot.respond /record status/i, (msg) ->
     msg.send 'Your current status is...'
-  robot.respond /record bookmark|book/i, (msg) ->
+  robot.respond /((record\s*)?(book)?mark)\s*(.{3,})*$/i, (msg) ->
     room = findRoom msg
+    bookmarkTitle = msg.match[4]
     recordings = getRecordings()
     recordingsCount = _.filter(recordings, room: room)
     activeRecording = _.filter(recordingsCount, active: true)
     if activeRecording.length < 1
       return msg.send 'We aren\'t recording right now. What would you like me to bookmark? How about I bookmark your face with my robotic fist?'
-    addBookmark room, activeRecording
+    addBookmark room, activeRecording, bookmarkTitle
   robot.respond /record delete/i, (msg) ->
     recordingsCleared = clearScheduledRecordingsFromRoom(findRoom(msg))
     msg.send 'Deleted ' + recordingsCleared + ' recording' + (if recordingsCleared == 1 then '' else 's') + '. No more recordings for you.'
