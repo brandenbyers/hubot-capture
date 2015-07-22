@@ -66,6 +66,16 @@ module.exports = (robot) ->
     message = '🎥 Setting up my camera gear...\n🎬 Rolling...'
     robot.messageRoom room, message
 
+  # Add a bookmark to active recording
+
+  addBookmark = (room, activeRecording) ->
+    bookmark = new Date()
+    activeRecording['book'].push bookmark
+    allBookmarks = activeRecording.book
+    console.log allBookmarks
+    message = "🔖 Bookmark added (total bookmarks: #{allBookmarks.length})"
+    robot.messageRoom room, message
+
   # Finds the room for most adaptors
 
   findRoom = (msg) ->
@@ -124,6 +134,13 @@ module.exports = (robot) ->
   robot.respond /record status/i, (msg) ->
     msg.send 'Your current status is...'
   robot.respond /record bookmark/i, (msg) ->
+    room = findRoom msg
+    recordings = getRecordings()
+    recordingsCount = _.filter(recordings, room: room)
+    activeRecording = _.filter(recordingsCount, active: true)
+    if activeRecording.length < 1
+      return msg.send 'We aren\'t recording right now. What would you like me to bookmark? How about a bookmark your face with my robotic fist?'
+    addBookmark room, activeRecording
     msg.send 'Bookmark added.'
   robot.respond /record remove bookmark/i, (msg) ->
     msg.send 'Deleted previous bookmark'
@@ -134,8 +151,8 @@ module.exports = (robot) ->
   robot.respond /record the future (.{3,})$/i, (msg) ->
     recordings = getRecordings()
     recordingsCount = _.filter(recordings, room: findRoom(msg))
-    activeChecker = _.filter(recordingsCount, active: true)
-    if activeChecker.length is 1
+    activeRecording = _.filter(recordingsCount, active: true)
+    if activeRecording.length is 1
       return msg.send 'Recording in progress. To set a future recording time please stop the active recording first.'
     if recordingsCount.length > 0
       return msg.send 'You can only schedule one future recording per room.\n\nIf you would like to change your recording time, please delete the previous one first by typing `. record delete`.'
