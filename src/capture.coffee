@@ -82,12 +82,12 @@ module.exports = (robot) ->
       room: room
       utc: utc
     recordings.push newRecording
-    console.log recordings
     updateBrain recordings
 
   # Updates the brain's recording knowledge.
 
   updateBrain = (recordings) ->
+    console.log recordings
     robot.brain.set 'recordings', recordings
 
   clearScheduledRecordingsFromRoom = (room) ->
