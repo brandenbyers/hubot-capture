@@ -123,7 +123,7 @@ module.exports = (robot) ->
     console.log recordingsCount
     console.log "###", recordingsCount.length
     if recordingsCount.length > 0
-      return msg.send 'You can only schedule one future recording per room.\n\nIf you would like to change your recording time, please delete the previous one first.'
+      return msg.send 'You can only schedule one future recording per room.\n\nIf you would like to change your recording time, please delete the previous one first by typing `. record delete`.'
     naturalTime = msg.match[1]
     timeStamp = chrono.parseDate(naturalTime)
     momentTime = moment(timeStamp)
@@ -143,9 +143,9 @@ module.exports = (robot) ->
   robot.respond /record list/i, (msg) ->
     recordings = getRecordingsForRoom(findRoom(msg))
     if recordings.length == 0
-      msg.send 'You don\'t have any recordings scheduled.'
+      msg.send 'You have not scheduled a recording yet.'
     else
-      recordingsText = [ 'Here are your scheduled recordings:' ].concat(_.map(recordings, (recording) ->
+      recordingsText = [ 'I am scheduled to record at:' ].concat(_.map(recordings, (recording) ->
         if recording.utc
           recording.time + ' UTC' + recording.utc
         else
@@ -157,7 +157,7 @@ module.exports = (robot) ->
     if recordings.length == 0
       msg.send 'No rooms currently recording.'
     else
-      recordingsText = [ 'Here are all of the active recordings:' ].concat(_.map(recordings, (recording) ->
+      recordingsText = [ 'Here are all of the active/scheduled recordings:' ].concat(_.map(recordings, (recording) ->
         'Room: ' + recording.room + ', Time: ' + recording.time
       ))
       msg.send recordingsText.join('\n')
