@@ -109,6 +109,9 @@ module.exports = (robot) ->
     recordings.push newRecording
     updateBrain recordings
 
+  stopRecording = (room, activeRecording) ->
+
+
   # Updates the brain's recording knowledge.
 
   updateBrain = (recordings) ->
@@ -131,22 +134,24 @@ module.exports = (robot) ->
     clearScheduledRecordingsFromRoom room
     doRecording room
   robot.respond /record stop/i, (msg) ->
-    # TODO: make a stop function
-  robot.respond /record status/i, (msg) ->
-    msg.send 'Your current status is...'
-  robot.respond /record bookmark/i, (msg) ->
     room = findRoom msg
     recordings = getRecordings()
     recordingsCount = _.filter(recordings, room: room)
     activeRecording = _.filter(recordingsCount, active: true)
     if activeRecording.length < 1
-      return msg.send 'We aren\'t recording right now. What would you like me to bookmark? How about a bookmark your face with my robotic fist?'
+      return msg.send 'Stop what? There is no active recording.'
+    stopRecording room, activeRecording
+  robot.respond /record status/i, (msg) ->
+    msg.send 'Your current status is...'
+  robot.respond /record bookmark|book/i, (msg) ->
+    room = findRoom msg
+    recordings = getRecordings()
+    recordingsCount = _.filter(recordings, room: room)
+    activeRecording = _.filter(recordingsCount, active: true)
+    if activeRecording.length < 1
+      return msg.send 'We aren\'t recording right now. What would you like me to bookmark? How about I bookmark your face with my robotic fist?'
     addBookmark room, activeRecording
-    msg.send 'Bookmark added.'
-  robot.respond /record remove bookmark/i, (msg) ->
-    msg.send 'Deleted previous bookmark'
   robot.respond /record delete/i, (msg) ->
-    # TODO: If currently recording, send delete. If scheduled recording, delete schedule.
     recordingsCleared = clearScheduledRecordingsFromRoom(findRoom(msg))
     msg.send 'Deleted ' + recordingsCleared + ' recording' + (if recordingsCleared == 1 then '' else 's') + '. No more recordings for you.'
   robot.respond /record the future (.{3,})$/i, (msg) ->
